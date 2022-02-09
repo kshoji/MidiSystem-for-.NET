@@ -10,7 +10,7 @@ Unity Package for MidiSystem
 Open the `manifest.json` for your project and add the following entry to your list of dependencies
 
 ```json
-"jp.kshoji.midisystem": "git@github.com:kshoji/MidiSystem-for-.NET.git",
+"jp.kshoji.midisystem": "git+https://github.com/kshoji/MidiSystem-for-.NET.git",
 ```
 
 # Add to your project with version
