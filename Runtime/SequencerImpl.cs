@@ -889,6 +889,7 @@ namespace jp.kshoji.midisystem
                 }
 
                 sequencer.recordingTrack = sequencer.sequence.CreateTrack();
+                sequencer.SetRecordEnable(sequencer.recordingTrack, -1);
                 sequencer.recordingStartedTime = CurrentTimeMillis();
                 sequencer.recordStartedTick = GetTickPosition();
                 IsRecording = true;
@@ -911,6 +912,11 @@ namespace jp.kshoji.midisystem
                 var eventToRemoval = new HashSet<MidiEvent>();
                 foreach (var track in sequencer.sequence.GetTracks())
                 {
+                    if (track == sequencer.recordingTrack)
+                    {
+                        continue;
+                    }
+
                     HashSet<int> recordEnableChannels = null;
                     if (sequencer.recordEnable.ContainsKey(track))
                     {
@@ -922,7 +928,7 @@ namespace jp.kshoji.midisystem
                     for (var trackIndex = 0; trackIndex < track.Size(); trackIndex++)
                     {
                         var midiEvent = track.Get(trackIndex);
-                        if (isRecordable(recordEnableChannels, midiEvent) && //
+                        if (isRecordable(recordEnableChannels, midiEvent) &&
                             midiEvent.GetTick() >= sequencer.recordingStartedTime &&
                             midiEvent.GetTick() <= recordEndedTime)
                         {

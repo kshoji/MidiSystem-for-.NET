@@ -170,6 +170,11 @@ namespace jp.kshoji.midisystem
 			MidiEvent midiEvent = null;
 			for (var i = 0; i < eventCount; i++) {
 	            midiEvent = track.Get(i);
+	            if (midiEvent.GetMessage() is ShortMessage && midiEvent.GetMessage().GetStatus() >= 0xf8)
+	            {
+		            // ignore system realtime messages
+		            continue;
+	            }
 				var tick = midiEvent.GetTick();
 				trackLength += MidiDataOutputStream.VariableLengthIntLength((int) (tick - lastTick));
 				lastTick = tick;
@@ -191,6 +196,11 @@ namespace jp.kshoji.midisystem
 			lastTick = 0;
 			for (var i = 0; i < eventCount; i++) {
 	            midiEvent = track.Get(i);
+	            if (midiEvent.GetMessage() is ShortMessage && midiEvent.GetMessage().GetStatus() >= 0xf8)
+	            {
+		            // ignore system realtime messages
+		            continue;
+	            }
 	            var tick = midiEvent.GetTick();
 				midiDataOutputStream.WriteVariableLengthInt((int) (tick - lastTick));
 				lastTick = tick;

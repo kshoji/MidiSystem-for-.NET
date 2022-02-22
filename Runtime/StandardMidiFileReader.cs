@@ -49,7 +49,9 @@ namespace jp.kshoji.midisystem
             int resolution;
             if ((division & 0x8000) != 0)
             {
-                division = -((division >> 8) & 0xff);
+                resolution = division & 0xff;
+
+                division = 256 - ((division >> 8) & 0xff);
                 switch (division)
                 {
                     case 24:
@@ -68,8 +70,6 @@ namespace jp.kshoji.midisystem
                     default:
                         throw new InvalidMidiDataException("Invalid sequence information");
                 }
-
-                resolution = division & 0xff;
             }
             else
             {
