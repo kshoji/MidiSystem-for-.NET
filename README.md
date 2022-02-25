@@ -26,5 +26,5 @@ Open the `manifest.json` for your project and add the following entry to your li
 Open the `package.json` for your project and add the following entry to the dependencies list with the desired commit hash
 
 ```json
-"jp.kshoji.midisystem": "https://github.com/kshoji/MidiSystem-for-.NET.git#48daf86ebbea196aaa2b064492fbf849388a682b"
+"jp.kshoji.midisystem": "https://github.com/kshoji/MidiSystem-for-.NET.git#48daf86ebbea196aaa2b064492fbf849388a682b",
 ```
