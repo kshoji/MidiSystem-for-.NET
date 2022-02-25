@@ -805,14 +805,53 @@ namespace jp.kshoji.midisystem
                                 // ignore exception
                             }
 
-                            if (IsRunning == false)
+                            if (sequencer.thread != null)
                             {
-                                break;
+                                // pause / resume
+                                while (!IsRunning)
+                                {
+                                    lock (sequencer.thread)
+                                    {
+                                        try
+                                        {
+                                            var pausing = false;
+                                            if (!IsRunning)
+                                            {
+                                                pausing = true;
+                                            }
+                                            // wait for being notified
+                                            while (!IsRunning && sequencer.isOpen)
+                                            {
+                                                Monitor.Wait(sequencer.thread);
+                                            }
+                                            if (pausing)
+                                            {
+                                                if (sequencer.needRefreshPlayingTrack)
+                                                {
+                                                    RefreshPlayingTrack();
+                                                }
+                                                for (var index = 0; index < sequencer.playingTrack.Size(); index++)
+                                                {
+                                                    if (sequencer.playingTrack.Get(index).GetTick() >= tickPosition)
+                                                    {
+                                                        i = index;
+                                                        break;
+                                                    }
+                                                }
+                                                continue;
+                                            }
+                                        }
+                                        catch (ThreadInterruptedException)
+                                        {
+                                            // ignore exception
+                                        }
+                                    }
+                                }
                             }
 
                             if (sequencer.needRefreshPlayingTrack)
                             {
-                                break;
+                                continue;
                             }
 
                             // process tempo change message
