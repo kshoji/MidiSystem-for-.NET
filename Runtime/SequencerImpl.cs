@@ -12,8 +12,8 @@ namespace jp.kshoji.midisystem
     public class SequencerImpl : ISequencer
     {
         public const int LoopContinuously = -1;
-        private static readonly ISequencer.SyncMode[] MasterSyncModes = { ISequencer.SyncMode.InternalClock };
-        private static readonly ISequencer.SyncMode[] SlaveSyncModes = { ISequencer.SyncMode.NoSync };
+        private static readonly SyncMode[] MasterSyncModes = { SyncMode.InternalClock };
+        private static readonly SyncMode[] SlaveSyncModes = { SyncMode.NoSync };
 
         private static readonly DateTime Epoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
 
@@ -32,7 +32,7 @@ namespace jp.kshoji.midisystem
         private int loopCount;
         private long loopEndPoint = -1;
         private long loopStartPoint;
-        private ISequencer.SyncMode masterSyncMode = ISequencer.SyncMode.InternalClock;
+        private SyncMode masterSyncMode = SyncMode.InternalClock;
         private bool needRefreshPlayingTrack;
 
         // playing
@@ -46,7 +46,7 @@ namespace jp.kshoji.midisystem
         private Sequence sequence;
 
         private SequencerThread sequencerThread;
-        private ISequencer.SyncMode slaveSyncMode = ISequencer.SyncMode.NoSync;
+        private SyncMode slaveSyncMode = SyncMode.NoSync;
         private volatile float tempoFactor = 1.0f;
         private float tempoInBpm = 120.0f;
         private Thread thread;
@@ -65,9 +65,9 @@ namespace jp.kshoji.midisystem
         }
 
         /// <inheritdoc cref="IMidiDevice.GetDeviceInfo"/>
-        public IMidiDevice.Info GetDeviceInfo()
+        public Info GetDeviceInfo()
         {
-            return new IMidiDevice.Info("sequencer", "vendor", "description", "version");
+            return new Info("sequencer", "vendor", "description", "version");
         }
 
         public void UpdateDeviceConnections()
@@ -337,12 +337,12 @@ namespace jp.kshoji.midisystem
         }
 
 
-        public ISequencer.SyncMode GetMasterSyncMode()
+        public SyncMode GetMasterSyncMode()
         {
             return masterSyncMode;
         }
 
-        public void SetMasterSyncMode(ISequencer.SyncMode sync)
+        public void SetMasterSyncMode(SyncMode sync)
         {
             foreach (var availableMode in GetMasterSyncModes())
             {
@@ -353,7 +353,7 @@ namespace jp.kshoji.midisystem
             }
         }
 
-        public ISequencer.SyncMode[] GetMasterSyncModes()
+        public SyncMode[] GetMasterSyncModes()
         {
             return MasterSyncModes;
         }
@@ -394,12 +394,12 @@ namespace jp.kshoji.midisystem
             }
         }
 
-        public ISequencer.SyncMode GetSlaveSyncMode()
+        public SyncMode GetSlaveSyncMode()
         {
             return slaveSyncMode;
         }
 
-        public void SetSlaveSyncMode(ISequencer.SyncMode sync)
+        public void SetSlaveSyncMode(SyncMode sync)
         {
             foreach (var availableMode in GetSlaveSyncModes())
             {
@@ -410,7 +410,7 @@ namespace jp.kshoji.midisystem
             }
         }
 
-        public ISequencer.SyncMode[] GetSlaveSyncModes()
+        public SyncMode[] GetSlaveSyncModes()
         {
             return SlaveSyncModes;
         }

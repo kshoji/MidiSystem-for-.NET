@@ -166,9 +166,11 @@ namespace jp.kshoji.midisystem
         {
             var fileType = sequence.GetTracks().Length == 1 ? 0 : 1;
 
-            using var midiDataOutputStream = new StandardMidiFileWriter.MidiDataOutputStream();
-            midiFileWriter.Write(sequence, fileType, midiDataOutputStream);
-            stream.Write(midiDataOutputStream.ToArray(), 0, (int)midiDataOutputStream.Length);
+            using (var midiDataOutputStream = new StandardMidiFileWriter.MidiDataOutputStream())
+			{
+            	midiFileWriter.Write(sequence, fileType, midiDataOutputStream);
+            	stream.Write(midiDataOutputStream.ToArray(), 0, (int)midiDataOutputStream.Length);
+			}
         }
     }
 }

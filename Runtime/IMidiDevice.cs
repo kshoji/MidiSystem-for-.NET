@@ -70,127 +70,127 @@ namespace jp.kshoji.midisystem
         /// </summary>
         /// <returns>the all of <see cref="ITransmitter" />s.</returns>
         List<ITransmitter> GetTransmitters();
+    }
+
+    /// <summary>
+    /// Represents the <see cref="IMidiDevice" />'s information
+    /// </summary>
+    public class Info
+    {
+        private readonly string name;
+        private readonly string vendor;
+        private readonly string description;
+        private readonly string version;
 
         /// <summary>
-        /// Represents the <see cref="IMidiDevice" />'s information
+        /// Constructor
         /// </summary>
-        class Info
+        /// <param name="name">the name string</param>
+        /// <param name="vendor">the vendor string</param>
+        /// <param name="description">the description string</param>
+        /// <param name="version">the version string</param>
+        public Info(string name, string vendor, string description, string version)
         {
-            private readonly string name;
-            private readonly string vendor;
-            private readonly string description;
-            private readonly string version;
+            this.name = name;
+            this.vendor = vendor;
+            this.description = description;
+            this.version = version;
+        }
 
-            /// <summary>
-            /// Constructor
-            /// </summary>
-            /// <param name="name">the name string</param>
-            /// <param name="vendor">the vendor string</param>
-            /// <param name="description">the description string</param>
-            /// <param name="version">the version string</param>
-            public Info(string name, string vendor, string description, string version)
+        /// <summary>
+        /// Get the name of <see cref="IMidiDevice" />
+        /// </summary>
+        /// <returns>the name of <see cref="IMidiDevice" /></returns>
+        public string GetName()
+        {
+            return name;
+        }
+
+        /// <summary>
+        /// Get the vendor of <see cref="IMidiDevice" />
+        /// </summary>
+        /// <returns>the vendor of <see cref="IMidiDevice" /></returns>
+        public string GetVendor()
+        {
+            return vendor;
+        }
+
+        /// <summary>
+        /// Get the description of <see cref="IMidiDevice" />
+        /// </summary>
+        /// <returns>the description of <see cref="IMidiDevice" /></returns>
+        public string GetDescription()
+        {
+            return description;
+        }
+
+        /// <summary>
+        /// Get the version of <see cref="IMidiDevice" />
+        /// </summary>
+        /// <returns>the version of <see cref="IMidiDevice" /></returns>
+        public string GetVersion()
+        {
+            return version;
+        }
+
+        /// <inheritdoc cref="object.ToString"/>
+        public override string ToString()
+        {
+            return name;
+        }
+
+        /// <inheritdoc cref="object.GetHashCode"/>
+        public override int GetHashCode()
+        {
+            var prime = 31;
+            var result = 1;
+            result = prime * result + description.GetHashCode();
+            result = prime * result + name.GetHashCode();
+            result = prime * result + vendor.GetHashCode();
+            result = prime * result + version.GetHashCode();
+            return result;
+        }
+
+        /// <inheritdoc cref="object.Equals(object)"/>
+        public override bool Equals(object obj)
+        {
+            if (this == obj)
             {
-                this.name = name;
-                this.vendor = vendor;
-                this.description = description;
-                this.version = version;
-            }
-
-            /// <summary>
-            /// Get the name of <see cref="IMidiDevice" />
-            /// </summary>
-            /// <returns>the name of <see cref="IMidiDevice" /></returns>
-            public string GetName()
-            {
-                return name;
-            }
-
-            /// <summary>
-            /// Get the vendor of <see cref="IMidiDevice" />
-            /// </summary>
-            /// <returns>the vendor of <see cref="IMidiDevice" /></returns>
-            public string GetVendor()
-            {
-                return vendor;
-            }
-
-            /// <summary>
-            /// Get the description of <see cref="IMidiDevice" />
-            /// </summary>
-            /// <returns>the description of <see cref="IMidiDevice" /></returns>
-            public string GetDescription()
-            {
-                return description;
-            }
-
-            /// <summary>
-            /// Get the version of <see cref="IMidiDevice" />
-            /// </summary>
-            /// <returns>the version of <see cref="IMidiDevice" /></returns>
-            public string GetVersion()
-            {
-                return version;
-            }
-
-            /// <inheritdoc cref="object.ToString"/>
-            public override string ToString()
-            {
-                return name;
-            }
-
-            /// <inheritdoc cref="object.GetHashCode"/>
-            public override int GetHashCode()
-            {
-                var prime = 31;
-                var result = 1;
-                result = prime * result + description.GetHashCode();
-                result = prime * result + name.GetHashCode();
-                result = prime * result + vendor.GetHashCode();
-                result = prime * result + version.GetHashCode();
-                return result;
-            }
-
-            /// <inheritdoc cref="object.Equals(object)"/>
-            public override bool Equals(object obj)
-            {
-                if (this == obj)
-                {
-                    return true;
-                }
-
-                if (obj == null)
-                {
-                    return false;
-                }
-
-                if (GetType() != obj.GetType())
-                {
-                    return false;
-                }
-
-                var other = (Info)obj;
-                if (!description.Equals(other.description))
-                {
-                    return false;
-                }
-
-                if (!name.Equals(other.name))
-                {
-                    return false;
-                }
-
-                if (!vendor.Equals(other.vendor))
-                {
-                    return false;
-                }
-
-                if (!version.Equals(other.version))
-                {
-                    return false;
-                }
-
                 return true;
             }
+
+            if (obj == null)
+            {
+                return false;
+            }
+
+            if (GetType() != obj.GetType())
+            {
+                return false;
+            }
+
+            var other = (Info)obj;
+            if (!description.Equals(other.description))
+            {
+                return false;
+            }
+
+            if (!name.Equals(other.name))
+            {
+                return false;
+            }
+
+            if (!vendor.Equals(other.vendor))
+            {
+                return false;
+            }
+
+            if (!version.Equals(other.version))
+            {
+                return false;
+            }
+
+            return true;
         }
     }
 }

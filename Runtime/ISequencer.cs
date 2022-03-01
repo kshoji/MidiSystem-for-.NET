@@ -284,63 +284,63 @@ namespace jp.kshoji.midisystem
         /// Stop recording. Playing continues.
         /// </summary>
         void StopRecording();
+    }
 
-        /// <summary>
-        /// <see cref="ISequencer"/>'s Synchronization mode
-        /// </summary>
-        class SyncMode
+    /// <summary>
+    /// <see cref="ISequencer"/>'s Synchronization mode
+    /// </summary>
+    public class SyncMode
+    {
+        public static readonly SyncMode InternalClock = new SyncMode("Internal Clock");
+        public static readonly SyncMode NoSync = new SyncMode("No Sync");
+
+        private readonly string name;
+
+        protected SyncMode(string name)
         {
-            public static readonly SyncMode InternalClock = new SyncMode("Internal Clock");
-            public static readonly SyncMode NoSync = new SyncMode("No Sync");
+            this.name = name;
+        }
 
-            private readonly string name;
-
-            protected SyncMode(string name)
+        /// <inheritdoc cref="object.Equals(object)"/>
+        public override bool Equals(object obj)
+        {
+            if (this == obj)
             {
-                this.name = name;
-            }
-
-            /// <inheritdoc cref="object.Equals(object)"/>
-            public override bool Equals(object obj)
-            {
-                if (this == obj)
-                {
-                    return true;
-                }
-
-                if (obj == null)
-                {
-                    return false;
-                }
-
-                if (GetType() != obj.GetType())
-                {
-                    return false;
-                }
-
-                var other = (SyncMode)obj;
-                if (!name.Equals(other.name))
-                {
-                    return false;
-                }
-
                 return true;
             }
 
-            /// <inheritdoc cref="object.GetHashCode"/>
-            public override int GetHashCode()
+            if (obj == null)
             {
-                var PRIME = 31;
-                var result = base.GetHashCode();
-                result = PRIME * result + name.GetHashCode();
-                return result;
+                return false;
             }
 
-            /// <inheritdoc cref="object.ToString"/>
-            public override string ToString()
+            if (GetType() != obj.GetType())
             {
-                return name;
+                return false;
             }
+
+            var other = (SyncMode)obj;
+            if (!name.Equals(other.name))
+            {
+                return false;
+            }
+
+            return true;
+        }
+
+        /// <inheritdoc cref="object.GetHashCode"/>
+        public override int GetHashCode()
+        {
+            var PRIME = 31;
+            var result = base.GetHashCode();
+            result = PRIME * result + name.GetHashCode();
+            return result;
+        }
+
+        /// <inheritdoc cref="object.ToString"/>
+        public override string ToString()
+        {
+            return name;
         }
     }
 }
