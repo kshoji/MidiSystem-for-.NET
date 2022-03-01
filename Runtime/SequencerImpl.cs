@@ -805,46 +805,43 @@ namespace jp.kshoji.midisystem
                                 // ignore exception
                             }
 
-                            if (sequencer.thread != null)
+                            // pause / resume
+                            while (!IsRunning && sequencer.thread != null)
                             {
-                                // pause / resume
-                                while (!IsRunning)
+                                lock (sequencer.thread)
                                 {
-                                    lock (sequencer.thread)
+                                    try
                                     {
-                                        try
+                                        var pausing = false;
+                                        if (!IsRunning)
                                         {
-                                            var pausing = false;
-                                            if (!IsRunning)
-                                            {
-                                                pausing = true;
-                                            }
-                                            // wait for being notified
-                                            while (!IsRunning && sequencer.isOpen)
-                                            {
-                                                Monitor.Wait(sequencer.thread);
-                                            }
-                                            if (pausing)
-                                            {
-                                                if (sequencer.needRefreshPlayingTrack)
-                                                {
-                                                    RefreshPlayingTrack();
-                                                }
-                                                for (var index = 0; index < sequencer.playingTrack.Size(); index++)
-                                                {
-                                                    if (sequencer.playingTrack.Get(index).GetTick() >= tickPosition)
-                                                    {
-                                                        i = index;
-                                                        break;
-                                                    }
-                                                }
-                                                continue;
-                                            }
+                                            pausing = true;
                                         }
-                                        catch (ThreadInterruptedException)
+                                        // wait for being notified
+                                        while (!IsRunning && sequencer.isOpen)
                                         {
-                                            // ignore exception
+                                            Monitor.Wait(sequencer.thread);
                                         }
+                                        if (pausing)
+                                        {
+                                            if (sequencer.needRefreshPlayingTrack)
+                                            {
+                                                RefreshPlayingTrack();
+                                            }
+                                            for (var index = 0; index < sequencer.playingTrack.Size(); index++)
+                                            {
+                                                if (sequencer.playingTrack.Get(index).GetTick() >= tickPosition)
+                                                {
+                                                    i = index;
+                                                    break;
+                                                }
+                                            }
+                                            continue;
+                                        }
+                                    }
+                                    catch (ThreadInterruptedException)
+                                    {
+                                        // ignore exception
                                     }
                                 }
                             }
