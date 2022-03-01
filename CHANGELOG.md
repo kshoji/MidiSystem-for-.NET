@@ -1,6 +1,12 @@
 # Changelog
 All notable changes to this package will be documented in this file.
 
+## [1.0.1] - 2022-03-01
+
+### Update release
+
+* Fix compile errors on C# 7.3 (Unity 2019)
+
 ## [1.0.0] - 2022-02-26
 
 ### Update release
