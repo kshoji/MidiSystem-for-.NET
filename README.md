@@ -18,7 +18,7 @@ Open the `manifest.json` for your project and add the following entry to your li
 Open the `manifest.json` for your project and add the following entry to your list of dependencies with the desired version
 
 ```json
-"jp.kshoji.midisystem": "https://github.com/kshoji/MidiSystem-for-.NET.git#0.0.0",
+"jp.kshoji.midisystem": "https://github.com/kshoji/MidiSystem-for-.NET.git#v1.0.1",
 ```
 
 # Add to your Package as a dependency, with commit hash
@@ -26,5 +26,5 @@ Open the `manifest.json` for your project and add the following entry to your li
 Open the `package.json` for your project and add the following entry to the dependencies list with the desired commit hash
 
 ```json
-"jp.kshoji.midisystem": "https://github.com/kshoji/MidiSystem-for-.NET.git#48daf86ebbea196aaa2b064492fbf849388a682b",
+"jp.kshoji.midisystem": "https://github.com/kshoji/MidiSystem-for-.NET.git#1295e26a5f9bdca90c7935bdbb6cd8511bc31c98",
 ```
