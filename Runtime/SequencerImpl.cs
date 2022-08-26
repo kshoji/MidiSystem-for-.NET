@@ -54,6 +54,8 @@ namespace jp.kshoji.midisystem
         private readonly IReceiver midiEventRecordingReceiver;
         private readonly Action onOpened;
 
+        private static HashSet<SequencerImpl> sequencers = new HashSet<SequencerImpl>();
+
         /// <summary>
         /// Constructor
         /// </summary>
@@ -99,6 +101,10 @@ namespace jp.kshoji.midisystem
             if (thread == null)
             {
                 sequencerThread = new SequencerThread();
+                lock (sequencers)
+                {
+                    sequencers.Add(this);
+                }
                 thread = new Thread(() => sequencerThread.StartSequencerThread(this, () =>
                 {
                     isOpen = true;
@@ -125,6 +131,17 @@ namespace jp.kshoji.midisystem
             }
         }
 
+        public static void CloseAllSequencers()
+        {
+            lock (sequencers)
+            {
+                foreach (var sequencer in sequencers)
+                {
+                    sequencer.Close();
+                }
+            }
+        }
+        
         public void Close()
         {
             lock (receivers)
@@ -141,6 +158,7 @@ namespace jp.kshoji.midisystem
             {
                 sequencerThread.StopPlaying();
                 isOpen = false;
+                thread.Interrupt();
                 sequencerThread = null;
                 thread = null;
             }
@@ -806,37 +824,34 @@ namespace jp.kshoji.midisystem
                             }
 
                             // pause / resume
-                            while (!IsRunning && sequencer.thread != null)
+                            while (!IsRunning && sequencer.isOpen && sequencer.thread != null)
                             {
                                 lock (sequencer.thread)
                                 {
                                     try
                                     {
-                                        var pausing = false;
-                                        if (!IsRunning)
-                                        {
-                                            pausing = true;
-                                        }
+                                        var pausing = !IsRunning;
                                         // wait for being notified
                                         while (!IsRunning && sequencer.isOpen)
                                         {
                                             Monitor.Wait(sequencer.thread);
                                         }
-                                        if (pausing)
+                                        if (!pausing)
                                         {
-                                            if (sequencer.needRefreshPlayingTrack)
-                                            {
-                                                RefreshPlayingTrack();
-                                            }
-                                            for (var index = 0; index < sequencer.playingTrack.Size(); index++)
-                                            {
-                                                if (sequencer.playingTrack.Get(index).GetTick() >= tickPosition)
-                                                {
-                                                    i = index;
-                                                    break;
-                                                }
-                                            }
                                             continue;
+                                        }
+
+                                        if (sequencer.needRefreshPlayingTrack)
+                                        {
+                                            RefreshPlayingTrack();
+                                        }
+                                        for (var index = 0; index < sequencer.playingTrack.Size(); index++)
+                                        {
+                                            if (sequencer.playingTrack.Get(index).GetTick() >= tickPosition)
+                                            {
+                                                i = index;
+                                                break;
+                                            }
                                         }
                                     }
                                     catch (ThreadInterruptedException)
@@ -844,6 +859,11 @@ namespace jp.kshoji.midisystem
                                         // ignore exception
                                     }
                                 }
+                            }
+
+                            if (!sequencer.isOpen)
+                            {
+                                break;
                             }
 
                             if (sequencer.needRefreshPlayingTrack)
