@@ -204,8 +204,18 @@ namespace jp.kshoji.midisystem
 	            var tick = midiEvent.GetTick();
 				midiDataOutputStream.WriteVariableLengthInt((int) (tick - lastTick));
 				lastTick = tick;
-				
-				midiDataOutputStream.Write(midiEvent.GetMessage().GetMessage(), 0, midiEvent.GetMessage().GetLength());
+
+				if (midiEvent.GetMessage() is SysexMessage sysexMessage)
+				{
+					midiDataOutputStream.WriteByte((byte)midiEvent.GetMessage().GetStatus());
+					var sysexData = sysexMessage.GetData();
+					midiDataOutputStream.WriteVariableLengthInt(sysexData.Length);
+					midiDataOutputStream.Write(sysexData, 0, sysexData.Length);
+				}
+				else
+				{
+					midiDataOutputStream.Write(midiEvent.GetMessage().GetMessage(), 0, midiEvent.GetMessage().GetLength());
+				}
 	        }
 
 	        // write End of Track message if not found.

@@ -80,8 +80,13 @@ namespace jp.kshoji.midisystem
         /// <returns>SysEx data</returns>
         public byte[] GetData()
         {
-            var result = new byte[Data.Length];
-            Array.Copy(Data, 0, result, 0, result.Length);
+            if (Data.Length == 0)
+            {
+                return new byte[] {};
+            }
+
+            var result = new byte[Data.Length - 1];
+            Array.Copy(Data, 1, result, 0, result.Length);
             return result;
         }
 
