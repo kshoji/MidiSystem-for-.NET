@@ -2,7 +2,7 @@
     "name": "jp.kshoji.midisystem",
     "displayName": "MidiSystem",
     "description": "MidiSystem porting for .NET / Unity",
-    "version": "1.0.1",
+    "version": "1.0.2",
     "unity": "2018.4",
     "license": "Apache-2.0",
     "repository": {

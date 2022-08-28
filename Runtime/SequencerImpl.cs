@@ -158,7 +158,10 @@ namespace jp.kshoji.midisystem
             {
                 sequencerThread.StopPlaying();
                 isOpen = false;
-                thread.Interrupt();
+                lock (thread)
+                {
+                    Monitor.PulseAll(thread);
+                }
                 sequencerThread = null;
                 thread = null;
             }
@@ -696,19 +699,12 @@ namespace jp.kshoji.midisystem
                 // playing
                 while (sequencer.isOpen)
                 {
-                    lock (sequencer.thread)
+                    // wait for being notified
+                    while (!IsRunning && sequencer.isOpen)
                     {
-                        try
+                        lock (sequencer.thread)
                         {
-                            // wait for being notified
-                            while (!IsRunning && sequencer.isOpen)
-                            {
-                                Monitor.Wait(sequencer.thread);
-                            }
-                        }
-                        catch (ThreadInterruptedException)
-                        {
-                            // ignore exception
+                            Monitor.Wait(sequencer.thread);
                         }
                     }
 
@@ -806,57 +802,46 @@ namespace jp.kshoji.midisystem
                                 continue;
                             }
 
-                            try
+                            var sleepLength = (int)(1.0f / sequencer.GetTicksPerMicrosecond() *
+                                (midiEvent.GetTick() - tickPosition) / 1000f / sequencer.GetTempoFactor());
+                            if (sleepLength > 0)
                             {
-                                var sleepLength = (int)(1.0f / sequencer.GetTicksPerMicrosecond() *
-                                    (midiEvent.GetTick() - tickPosition) / 1000f / sequencer.GetTempoFactor());
-                                if (sleepLength > 0)
+                                lock (sequencer.thread)
                                 {
-                                    Thread.Sleep(sleepLength);
+                                    Monitor.Wait(sequencer.thread, sleepLength);
                                 }
+                            }
 
-                                tickPosition = midiEvent.GetTick();
-                                sequencer.tickPositionSetTime = CurrentTimeMillis();
-                            }
-                            catch (ThreadInterruptedException)
-                            {
-                                // ignore exception
-                            }
+                            tickPosition = midiEvent.GetTick();
+                            sequencer.tickPositionSetTime = CurrentTimeMillis();
 
                             // pause / resume
                             while (!IsRunning && sequencer.isOpen && sequencer.thread != null)
                             {
-                                lock (sequencer.thread)
+                                var pausing = !IsRunning;
+                                // wait for being notified
+                                while (!IsRunning && sequencer.isOpen)
                                 {
-                                    try
+                                    lock (sequencer.thread)
                                     {
-                                        var pausing = !IsRunning;
-                                        // wait for being notified
-                                        while (!IsRunning && sequencer.isOpen)
-                                        {
-                                            Monitor.Wait(sequencer.thread);
-                                        }
-                                        if (!pausing)
-                                        {
-                                            continue;
-                                        }
-
-                                        if (sequencer.needRefreshPlayingTrack)
-                                        {
-                                            RefreshPlayingTrack();
-                                        }
-                                        for (var index = 0; index < sequencer.playingTrack.Size(); index++)
-                                        {
-                                            if (sequencer.playingTrack.Get(index).GetTick() >= tickPosition)
-                                            {
-                                                i = index;
-                                                break;
-                                            }
-                                        }
+                                        Monitor.Wait(sequencer.thread);
                                     }
-                                    catch (ThreadInterruptedException)
+                                }
+                                if (!pausing)
+                                {
+                                    continue;
+                                }
+
+                                if (sequencer.needRefreshPlayingTrack)
+                                {
+                                    RefreshPlayingTrack();
+                                }
+                                for (var index = 0; index < sequencer.playingTrack.Size(); index++)
+                                {
+                                    if (sequencer.playingTrack.Get(index).GetTick() >= tickPosition)
                                     {
-                                        // ignore exception
+                                        i = index;
+                                        break;
                                     }
                                 }
                             }
@@ -1049,14 +1034,12 @@ namespace jp.kshoji.midisystem
                 if (IsRunning == false)
                 {
                     // already stopping
-                    lock (this)
-                    {
-                        Monitor.PulseAll(this);
-                    }
-
                     if (sequencer != null && sequencer.thread != null)
                     {
-                        sequencer.thread.Interrupt();
+                        lock (sequencer.thread)
+                        {
+                            Monitor.PulseAll(sequencer.thread);
+                        }
                     }
 
                     return;
@@ -1070,8 +1053,6 @@ namespace jp.kshoji.midisystem
                 {
                     Monitor.PulseAll(sequencer.thread);
                 }
-
-                sequencer.thread.Interrupt();
             }
 
             /// <summary>

@@ -1,6 +1,15 @@
 # Changelog
 All notable changes to this package will be documented in this file.
 
+## [1.0.2] - 2022-08-29
+
+### Update release
+
+* Fix issues
+  * Sequencer thread remains after closing
+  * Use Monitor.Wait/Pulse instead of Thread.Sleep/Interrupt
+  * SMF read/write issues around System exclusive
+
 ## [1.0.1] - 2022-03-01
 
 ### Update release
