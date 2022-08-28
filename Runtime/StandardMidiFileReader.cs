@@ -172,6 +172,10 @@ namespace jp.kshoji.midisystem
                         {
                             // System Exclusive event
                             var sysexLength = midiDataInputStream.ReadVariableLengthInt();
+                            if (sysexLength > midiDataInputStream.Length - midiDataInputStream.Position)
+                            {
+                                throw new InvalidMidiDataException($"Invalid system exclusive length: {sysexLength}");
+                            }
                             var sysexData = new byte[sysexLength];
                             midiDataInputStream.ReadFully(sysexData);
 
